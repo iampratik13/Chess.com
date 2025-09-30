@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # ♟️ Chess.com Clone
 
 A real-time multiplayer chess game built with React, TypeScript, and WebSockets. Features complete chess logic, move validation, and Chess.com-like UI.
