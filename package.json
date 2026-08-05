@@ -1,0 +1,17 @@
+{
+  "name": "chess-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build -w @chess/protocol && npm run build -w backend && npm run build -w frontend",
+    "build:protocol": "npm run build -w @chess/protocol",
+    "dev:protocol": "npm run dev -w @chess/protocol",
+    "dev:backend": "npm run dev -w backend",
+    "dev:frontend": "npm run dev -w frontend"
+  }
+}

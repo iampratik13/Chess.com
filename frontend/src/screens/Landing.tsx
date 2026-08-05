@@ -1,179 +1,152 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Chess } from "chess.js";
+import { Users, KeyRound, LineChart, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Brand } from "@/components/Brand";
+import { HeroBoard3D } from "@/components/HeroBoard3D";
+import { Button } from "@/components/ui/button";
 
+const heroBoard = (() => {
+  const chess = new Chess();
+  ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "a6"].forEach((m) => chess.move(m));
+  return chess.board();
+})();
 
-import { useNavigate } from 'react-router-dom';
-import chessboardImage from '../assets/chessboard copy.jpeg';
+const FEATURES = [
+  {
+    icon: Users,
+    title: "Play in real time",
+    body: "Get matched instantly and play smooth, low-latency games against real opponents.",
+  },
+  {
+    icon: KeyRound,
+    title: "Private rooms",
+    body: "Spin up a room, share a six-character code, and play a friend in seconds.",
+  },
+  {
+    icon: LineChart,
+    title: "Track your progress",
+    body: "Every game is saved with your record, so you can watch yourself improve.",
+  },
+];
+
+const STEPS = [
+  { n: "01", title: "Create an account", body: "Sign up with email or Google in under a minute." },
+  { n: "02", title: "Find a game", body: "Match with a random opponent or open a private room." },
+  { n: "03", title: "Play & improve", body: "Every result is saved to your dashboard automatically." },
+];
 
 export const Landing = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
-    const handleGetStarted = () => {
-        navigate('/game');
-    };
+  useEffect(() => {
+    if (currentUser) navigate("/dashboard");
+  }, [currentUser, navigate]);
 
-    const handleSignUp = () => {
-        // For now, redirect to game - you can implement actual signup later
-        navigate('/game');
-    };
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="border-b border-border">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <Brand size="md" />
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/signin")}>
+              Sign in
+            </Button>
+            <Button size="sm" onClick={() => navigate("/signup")}>
+              Get started
+            </Button>
+          </div>
+        </nav>
+      </header>
 
-    const handleLogIn = () => {
-        // For now, redirect to game - you can implement actual login later
-        navigate('/game');
-    };
-
-    return (
-        <div className="min-h-screen bg-gray-800 flex">
-            {/* Left Sidebar */}
-            <div className="w-64 bg-gray-900 flex flex-col">
-                {/* Logo */}
-                <div className="p-4 border-b border-gray-700">
-                    <h1 className="text-white text-xl font-bold">♔Chess.com</h1>
-                </div>
-
-                {/* Navigation Menu */}
-                <nav className="flex-1 p-4">
-                    <ul className="space-y-2">
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-white hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-orange-500">♟</span>
-                                <span>Play</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-orange-500">🧩</span>
-                                <span>Puzzles</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-blue-500">🎓</span>
-                                <span>Learn</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-purple-500">👁</span>
-                                <span>Watch</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-red-500">📰</span>
-                                <span>News</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-blue-400">👥</span>
-                                <span>Social</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center space-x-3 text-gray-300 hover:bg-gray-700 px-3 py-2 rounded">
-                                <span className="text-gray-400">⋯</span>
-                                <span>More</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-
-                {/* Search Bar */}
-                <div className="p-4 border-t border-gray-700">
-                    <div className="relative">
-                        <input 
-                            type="text" 
-                            placeholder="Search" 
-                            className="w-full bg-gray-800 text-white px-3 py-2 rounded border border-gray-600 focus:border-green-500 focus:outline-none"
-                        />
-                        <span className="absolute right-3 top-2 text-gray-400">🔍</span>
-                    </div>
-                </div>
-
-                {/* Sign Up / Log In Buttons */}
-                <div className="p-4 space-y-2">
-                    <button 
-                        onClick={handleSignUp}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-colors"
-                    >
-                        Sign Up
-                    </button>
-                    <button 
-                        onClick={handleLogIn}
-                        className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded transition-colors"
-                    >
-                        Log In
-                    </button>
-                </div>
-
-                {/* Footer Links */}
-                <div className="p-4 border-t border-gray-700 text-sm text-gray-400">
-                    <div className="space-y-1">
-                        <a href="#" className="flex items-center space-x-2 hover:text-white">
-                            <span>🌐</span>
-                            <span>English</span>
-                        </a>
-                        <a href="#" className="flex items-center space-x-2 hover:text-white">
-                            <span>💬</span>
-                            <span>Support</span>
-                        </a>
-                    </div>
-                </div>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="texture-dots pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+        <div className="texture-glow pointer-events-none absolute inset-0" aria-hidden />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 lg:grid-cols-2 lg:py-24">
+          <div>
+            <h1 className="font-display text-4xl font-semibold leading-[1.05] sm:text-6xl">
+              Chess that feels
+              <br />
+              handcrafted.
+            </h1>
+            <p className="mt-5 max-w-md text-lg text-muted-foreground">
+              No clutter, no gimmicks. Just a fast, elegant board for real-time games with friends
+              and strangers alike.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" onClick={() => navigate("/signup")}>
+                Play now <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/signin")}>
+                I have an account
+              </Button>
             </div>
+          </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col">
-                {/* Top Stats Bar */}
-                <div className="bg-gray-900 px-6 py-3 flex justify-center space-x-8 text-white">
-                    <div className="text-center">
-                        <span className="text-2xl font-bold">216,568</span>
-                        <span className="text-gray-400 text-sm ml-2">PLAYING NOW</span>
-                    </div>
-                    <div className="text-center">
-                        <span className="text-2xl font-bold">18,547,103</span>
-                        <span className="text-gray-400 text-sm ml-2">GAMES TODAY</span>
-                    </div>
-                </div>
-
-                {/* Hero Section */}
-                <div className="flex-1 flex items-center justify-center px-8">
-                    <div className="max-w-6xl w-full flex items-center justify-between">
-                        {/* Chessboard Image */}
-                        <div className="flex-1 flex justify-center">
-                            <div className="w-96 h-96">
-                                <img 
-                                    src={chessboardImage} 
-                                    alt="Chess Board" 
-                                    className="w-full h-full object-cover rounded-lg shadow-lg"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Right Side Content */}
-                        <div className="flex-1 text-center text-white max-w-md ml-12">
-                            <h1 className="text-5xl font-bold mb-4 leading-tight">
-                                Play chess.<br />
-                                <span className="text-4xl">Improve your game.</span><br />
-                                <span className="text-4xl">Have fun!</span>
-                            </h1>
-                            
-                            <button 
-                                onClick={handleGetStarted}
-                                className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-12 rounded-lg text-xl mt-8 transition-colors shadow-lg"
-                            >
-                                Get Started
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Learn More Section */}
-                <div className="text-center pb-8">
-                    <button className="text-gray-400 hover:text-white transition-colors">
-                        <div className="text-sm">Learn More</div>
-                        <div className="text-lg">▼</div>
-                    </button>
-                </div>
-            </div>
+          <div className="mx-auto w-full max-w-md">
+            <HeroBoard3D board={heroBoard} lastMove={{ from: "b8", to: "a6" }} />
+          </div>
         </div>
-    );
+      </section>
+
+      {/* Features */}
+      <section className="border-t border-border bg-secondary/40">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <div className="grid gap-6 md:grid-cols-3">
+            {FEATURES.map(({ icon: Icon, title, body }) => (
+              <div
+                key={title}
+                className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-display text-lg font-semibold">{title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="border-t border-border">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <h2 className="font-display text-2xl font-semibold">Up and running in three steps</h2>
+          <div className="mt-8 grid gap-8 md:grid-cols-3">
+            {STEPS.map((step) => (
+              <div key={step.n}>
+                <span className="font-display text-3xl font-semibold text-primary/40">{step.n}</span>
+                <h3 className="mt-2 font-medium">{step.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-border bg-secondary/40">
+        <div className="mx-auto max-w-6xl px-6 py-20 text-center">
+          <h2 className="font-display text-3xl font-semibold">Ready for your first move?</h2>
+          <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+            Create a free account and start playing in under a minute.
+          </p>
+          <Button size="lg" className="mt-6" onClick={() => navigate("/signup")}>
+            Create free account
+          </Button>
+        </div>
+      </section>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
+          <Brand />
+          <p>© {new Date().getFullYear()} Gambit</p>
+        </div>
+      </footer>
+    </div>
+  );
 };

@@ -13,8 +13,8 @@ export const useSocket = () => {
       setSocket(ws);
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
+    ws.onclose = (event) => {
+      console.log("WebSocket connection closed", event.code, event.reason);
       setSocket(null);
     };
 
@@ -23,7 +23,8 @@ export const useSocket = () => {
     };
 
     return () => {
-      if (ws.readyState === WebSocket.OPEN) {
+      console.log("Cleaning up WebSocket connection");
+      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
         ws.close();
       }
     };

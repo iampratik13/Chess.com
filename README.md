@@ -1,18 +1,70 @@
-<<<<<<< HEAD
-# ♟️ Chess.com Clone
+# ♞ Gambit
 
-A real-time multiplayer chess game built with React, TypeScript, and WebSockets. Features complete chess logic, move validation, and Chess.com-like UI.
+A real-time multiplayer chess app — play a random opponent or a friend over a
+private room, with move validation and game history. Built as a TypeScript
+monorepo with a shared, fully-typed WebSocket protocol.
 
-# ✨ Features
+## Features
 
-- **Complete Chess Logic** with chess.js library
-- **Real-time Multiplayer** via WebSocket communication
-- **Interactive Board** with piece selection and move highlighting
-- **Move Validation** and game state management
+- **Real-time play** over WebSockets with server-authoritative move validation
+- **Random matchmaking** and **private rooms** (shareable 6-character codes)
+- **Google / email authentication** (Firebase Auth)
+- **Game history & stats** persisted to Firestore, with stale-while-revalidate loading
+- Board experience: legal-move hints, last-move & check highlights, promotion,
+  board flipping, resign, and disconnect handling
+- Responsive, mobile-first UI with a warm, handcrafted design system
 
-# 🎮 How to Play
+## Tech stack
 
-1. Click "Start Game" button
-2. Wait for opponent to join
-3. Click pieces to select, click highlighted squares to move
-4. Game tracks moves and handles win/draw conditions automatically
+| Layer    | Tech                                                        |
+| -------- | ----------------------------------------------------------- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4, React Router   |
+| Backend  | Node.js, `ws` (WebSocket), `chess.js`                       |
+| Shared   | `@chess/protocol` — typed message contract used by both ends |
+| Services | Firebase Auth + Firestore                                   |
+
+## Monorepo layout
+
+```
+packages/protocol   # Shared, typed client/server message contract
+backend             # WebSocket game server (matchmaking, rooms, game state)
+frontend            # React client
+```
+
+The shared protocol is the single source of truth for every WebSocket message,
+so the client and server can never drift out of sync.
+
+## Getting started
+
+```bash
+# Install all workspaces
+npm install
+
+# Build the shared protocol (needed once before running the backend)
+npm run build:protocol
+
+# In separate terminals:
+npm run dev:backend    # ws://localhost:8080
+npm run dev:frontend   # http://localhost:5173
+```
+
+To run against your own Firebase project, update `frontend/src/config/firebase.ts`
+with your web app credentials.
+
+## Scripts (root)
+
+| Script                   | Description                            |
+| ------------------------ | ------------------------------------- |
+| `npm run build`          | Build protocol, backend, and frontend |
+| `npm run dev:frontend`   | Start the Vite dev server             |
+| `npm run dev:backend`    | Compile and run the game server       |
+| `npm run build:protocol` | Build the shared protocol package     |
+
+## Architecture notes
+
+- **Server-authoritative**: the backend validates turn order and legality with
+  `chess.js` and decides every outcome; the client renders and mirrors state.
+- **No stale closures**: game state lives in a single `chess.js` instance behind
+  a ref (`useChessGame`), and the socket listener is attached once per socket.
+- **Self-contained game lifecycle**: finished games remove themselves from the
+  manager, so the server never leaks memory.
