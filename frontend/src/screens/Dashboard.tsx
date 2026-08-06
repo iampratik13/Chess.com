@@ -11,7 +11,6 @@ import {
   Trophy,
   X,
   Minus,
-  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
