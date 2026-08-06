@@ -2,24 +2,21 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: Replace with your Firebase configuration
-// Get these from Firebase Console > Project Settings > Your apps
+// Values come from environment variables (see .env.example). Firebase web keys
+// are not secrets — they ship in the client bundle and only identify the
+// project — but keeping them out of source keeps the repo clean and portable.
 const firebaseConfig = {
-  apiKey: "AIzaSyDB5RqmZavEvF7T7m6N2XLoDNMvJ-uq5NY",
-  authDomain: "chess-ea981.firebaseapp.com",
-  projectId: "chess-ea981",
-  storageBucket: "chess-ea981.firebasestorage.app",
-  messagingSenderId: "541912378335",
-  appId: "1:541912378335:web:38ed0a90e209f50741f26a"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
-
-// Initialize Firestore
 export const db = getFirestore(app);
 
 export default app;

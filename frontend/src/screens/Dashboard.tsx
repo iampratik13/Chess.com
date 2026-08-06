@@ -1,5 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { LogOut, Play, Gamepad2, Users, Clock, ArrowRight } from "lucide-react";
+import {
+  LogOut,
+  Play,
+  Gamepad2,
+  Users,
+  Clock,
+  ArrowRight,
+  Cpu,
+  Swords,
+  Trophy,
+  X,
+  Minus,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserData } from "@/hooks/useUserData";
@@ -16,6 +30,39 @@ const RESULT_STYLES: Record<GameResult["result"], string> = {
   draw: "bg-muted text-muted-foreground",
 };
 
+interface ActionTileProps {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  onClick: () => void;
+  primary?: boolean;
+}
+
+const ActionTile = ({ icon: Icon, title, desc, onClick, primary }: ActionTileProps) => (
+  <button
+    onClick={onClick}
+    className={`group relative flex flex-col items-start gap-3 overflow-hidden rounded-xl border p-5 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${
+      primary
+        ? "border-primary/40 bg-primary text-primary-foreground shadow-sm"
+        : "border-border bg-card hover:border-primary/40"
+    }`}
+  >
+    <span
+      className={`flex h-11 w-11 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-105 ${
+        primary ? "bg-primary-foreground/15" : "bg-secondary text-foreground group-hover:bg-primary/10 group-hover:text-primary"
+      }`}
+    >
+      <Icon className="h-5 w-5" />
+    </span>
+    <span>
+      <span className="block font-display text-base font-semibold">{title}</span>
+      <span className={`mt-0.5 block text-xs ${primary ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+        {desc}
+      </span>
+    </span>
+  </button>
+);
+
 export const Dashboard = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -24,11 +71,17 @@ export const Dashboard = () => {
 
   const name = currentUser?.displayName || currentUser?.email?.split("@")[0] || "Player";
 
-  const statCards = [
-    { label: "Games", value: stats.gamesPlayed },
-    { label: "Wins", value: stats.wins, accent: "text-primary" },
-    { label: "Losses", value: stats.losses, accent: "text-destructive" },
-    { label: "Draws", value: stats.draws },
+  const statCards: { label: string; value: number; icon: LucideIcon; accent?: string; iconTint: string }[] = [
+    { label: "Games", value: stats.gamesPlayed, icon: Swords, iconTint: "bg-secondary text-foreground" },
+    { label: "Wins", value: stats.wins, icon: Trophy, accent: "text-primary", iconTint: "bg-primary/10 text-primary" },
+    {
+      label: "Losses",
+      value: stats.losses,
+      icon: X,
+      accent: "text-destructive",
+      iconTint: "bg-destructive/10 text-destructive",
+    },
+    { label: "Draws", value: stats.draws, icon: Minus, iconTint: "bg-muted text-muted-foreground" },
   ];
 
   return (
@@ -52,24 +105,35 @@ export const Dashboard = () => {
         {/* Hero band */}
         <section className="relative overflow-hidden rounded-2xl border border-border bg-card">
           <div className="texture-glow pointer-events-none absolute inset-0" aria-hidden />
-          <div className="relative grid items-center gap-6 p-8 md:grid-cols-2">
+          <div
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/5 blur-3xl"
+            aria-hidden
+          />
+          <div className="relative grid items-center gap-8 p-8 md:grid-cols-[1.1fr_1fr]">
             <div>
-              <p className="text-sm font-medium text-primary">Welcome back</p>
-              <h1 className="mt-1 font-display text-3xl font-semibold sm:text-4xl">{name}</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+                <Sparkles className="h-3.5 w-3.5" /> Welcome back
+              </span>
+              <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl">{name}</h1>
               <p className="mt-2 max-w-sm text-muted-foreground">
-                Jump straight into a game, or set up a private room for a friend.
+                {stats.gamesPlayed > 0
+                  ? `You've played ${stats.gamesPlayed} game${stats.gamesPlayed === 1 ? "" : "s"} so far — ready for the next one?`
+                  : "Jump straight into a game, or set up a private room for a friend."}
               </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button size="lg" onClick={() => navigate("/game")}>
-                  <Play className="h-4 w-4" /> Play online
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => setRoomModal("create")}>
-                  <Gamepad2 className="h-4 w-4" /> Create room
-                </Button>
-                <Button size="lg" variant="ghost" onClick={() => setRoomModal("join")}>
-                  <Users className="h-4 w-4" /> Join
-                </Button>
-              </div>
+              {stats.gamesPlayed > 0 && (
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-1.5 text-sm">
+                    <Trophy className="h-3.5 w-3.5 text-primary" />
+                    <span className="font-semibold tabular-nums">{stats.wins}</span>
+                    <span className="text-muted-foreground">wins</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-1.5 text-sm">
+                    <Swords className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="font-semibold tabular-nums">{stats.gamesPlayed}</span>
+                    <span className="text-muted-foreground">played</span>
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex justify-center md:justify-end">
               <StatsRing wins={stats.wins} losses={stats.losses} draws={stats.draws} loading={loading} />
@@ -77,15 +141,52 @@ export const Dashboard = () => {
           </div>
         </section>
 
+        {/* Quick play */}
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ActionTile
+            primary
+            icon={Play}
+            title="Play online"
+            desc="Match a live opponent"
+            onClick={() => navigate("/game")}
+          />
+          <ActionTile
+            icon={Cpu}
+            title="Play computer"
+            desc="Train against Stockfish"
+            onClick={() => navigate("/play/computer")}
+          />
+          <ActionTile
+            icon={Gamepad2}
+            title="Create room"
+            desc="Invite a friend to play"
+            onClick={() => setRoomModal("create")}
+          />
+          <ActionTile
+            icon={Users}
+            title="Join room"
+            desc="Enter a room code"
+            onClick={() => setRoomModal("join")}
+          />
+        </div>
+
         {/* Stats */}
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {statCards.map((card) => (
-            <div key={card.label} className="rounded-xl border border-border bg-card p-5">
-              <p className="text-sm text-muted-foreground">{card.label}</p>
+            <div
+              key={card.label}
+              className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/30"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">{card.label}</p>
+                <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${card.iconTint}`}>
+                  <card.icon className="h-4 w-4" />
+                </span>
+              </div>
               {loading ? (
-                <Skeleton className="mt-2 h-8 w-14" />
+                <Skeleton className="mt-3 h-8 w-14" />
               ) : (
-                <p className={`mt-1 font-display text-3xl font-semibold ${card.accent ?? ""}`}>
+                <p className={`mt-2 font-display text-3xl font-semibold tabular-nums ${card.accent ?? ""}`}>
                   {card.value}
                 </p>
               )}
