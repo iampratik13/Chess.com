@@ -1,6 +1,6 @@
 # ♞ Gambit
 
-A real-time multiplayer chess app — play a random opponent or a friend over a
+A real-time multiplayer chess app play a random opponent or a friend over a
 private room, with move validation and game history. Built as a TypeScript
 monorepo with a shared, fully-typed WebSocket protocol.
 
@@ -48,8 +48,39 @@ npm run dev:backend    # ws://localhost:8080
 npm run dev:frontend   # http://localhost:5173
 ```
 
-To run against your own Firebase project, update `frontend/src/config/firebase.ts`
-with your web app credentials.
+Copy `frontend/.env.example` to `frontend/.env` and fill in your Firebase web
+app credentials (and optionally `VITE_WS_URL`). The backend reads `PORT` and an
+optional `ALLOWED_ORIGINS` — see `backend/.env.example`.
+
+## Deployment
+
+The app is designed to deploy as a split: static frontend on **Vercel**,
+WebSocket backend on **Railway**.
+
+### Backend → Railway
+
+Create a service from this repo. `railway.json` already sets the build and start
+commands (build the shared protocol, then the backend) and a `/health` check.
+Set these variables:
+
+| Variable          | Value                                             |
+| ----------------- | ------------------------------------------------- |
+| `ALLOWED_ORIGINS` | Your Vercel URL, e.g. `https://your-app.vercel.app` |
+
+Railway injects `PORT` automatically; the server binds it and exposes `/health`.
+Note the public domain — you'll point the frontend at it over `wss://`.
+
+### Frontend → Vercel
+
+Import the repo. `vercel.json` sets the build (`npm run build -w frontend`),
+output directory, and SPA rewrites. Set these variables:
+
+| Variable         | Value                                          |
+| ---------------- | ---------------------------------------------- |
+| `VITE_WS_URL`    | `wss://<your-railway-domain>`                  |
+| `VITE_FIREBASE_*`| Your Firebase web app credentials (see `.env.example`) |
+
+Deploy the backend first so you have its domain for `VITE_WS_URL`.
 
 ## Scripts (root)
 

@@ -48,15 +48,15 @@ const ActionTile = ({ icon: Icon, title, desc, onClick, primary }: ActionTilePro
     }`}
   >
     <span
-      className={`flex h-11 w-11 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-105 ${
+      className={`flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${
         primary ? "bg-primary-foreground/15" : "bg-secondary text-foreground group-hover:bg-primary/10 group-hover:text-primary"
       }`}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-6 w-6" />
     </span>
     <span>
-      <span className="block font-display text-base font-semibold">{title}</span>
-      <span className={`mt-0.5 block text-xs ${primary ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+      <span className="block font-display text-lg font-semibold">{title}</span>
+      <span className={`mt-0.5 block text-sm ${primary ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
         {desc}
       </span>
     </span>
@@ -112,7 +112,7 @@ export const Dashboard = () => {
           <div className="relative grid items-center gap-8 p-8 md:grid-cols-[1.1fr_1fr]">
             <div>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
-                <Sparkles className="h-3.5 w-3.5" /> Welcome back
+                Welcome back
               </span>
               <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl">{name}</h1>
               <p className="mt-2 max-w-sm text-muted-foreground">
@@ -178,15 +178,15 @@ export const Dashboard = () => {
               className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/30"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">{card.label}</p>
-                <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${card.iconTint}`}>
-                  <card.icon className="h-4 w-4" />
+                <p className="text-sm font-medium text-muted-foreground">{card.label}</p>
+                <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${card.iconTint}`}>
+                  <card.icon className="h-5 w-5" />
                 </span>
               </div>
               {loading ? (
-                <Skeleton className="mt-3 h-8 w-14" />
+                <Skeleton className="mt-3 h-9 w-16" />
               ) : (
-                <p className={`mt-2 font-display text-3xl font-semibold tabular-nums ${card.accent ?? ""}`}>
+                <p className={`mt-2 font-display text-4xl font-semibold tabular-nums ${card.accent ?? ""}`}>
                   {card.value}
                 </p>
               )}
@@ -212,8 +212,8 @@ export const Dashboard = () => {
               ))}
             </ul>
           ) : games.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 p-10 text-center">
-              <img src="/pieces/wp.svg" alt="" className="h-10 w-10 opacity-70" />
+            <div className="flex flex-col items-center gap-3 p-12 text-center">
+              <img src="/pieces/wp.svg" alt="" className="h-14 w-14 opacity-70" />
               <p className="text-sm text-muted-foreground">
                 No games yet — play your first to see it here.
               </p>
